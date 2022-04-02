@@ -1,0 +1,426 @@
+---
+title: "Estimating Variance"
+subtitle: "Chi square distribution"
+graphics: yes
+output: 
+        pdf_document:
+         toc: false
+         number_sections: true
+  
+header-includes:
+- \usepackage{amsmath,amsfonts,amssymb}
+- \usepackage{framed,slashbox}     
+- \usepackage{multicol,graphicx}
+- \usepackage{fontawesome5}
+
+---
+\definecolor{shadecolor}{rgb}{0.949,0.949,0.949}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(fastR2)
+```
+
+\textbf{References:} 
+\begin{itemize}
+\item Pruim $\S 4.6$ (also Appendix C for a quick linear algebra review)
+\end{itemize}
+
+At the end of STAT 341, we talked about making inference for the population mean when the variance $\sigma$ is known. Usually, however, we need to estimate $\sigma$ from sample data, just as we do with $\mu$.
+
+Two key facts will now come into play. First, an unbiased estimator for $\sigma^2$ is the sample variance:
+\begin{eqnarray*}
+S^{2} &=& \frac{1}{n-1} \sum\limits_{i=1}^{n} \left(X_i - \bar{X} \right)^2.
+\end{eqnarray*}
+
+Second, the distribution of $S^2$ can be determined and it is related to a family of distributions we have already encountered. 
+
+\section{An unbiased estimator for $\sigma^2$}
+
+\begin{shaded}
+\textbf{Lemma 1.1} Given an i.i.d. sample from a distribution with mean $\mu$ and standard deviation $\sigma$, the sample variance is an \textbf{unbiased estimator} of the population variance. That is,
+\begin{align*}
+E\left[ S^2 \right] &= E\left[ \frac{1}{n-1} \sum\limits_{i=1}^{n} (X_i - \bar{X})^2 \right] = \sigma^2.
+\end{align*}
+\end{shaded}
+
+The proof rests on an important identity which is stated below:
+
+\begin{eqnarray}
+\sum\limits_{i=1}^{n} (X_i- \bar{X})^2 &=& \sum\limits_{i=1}^{n} X^2_i - n \bar{X}^2. \label{one}
+\end{eqnarray}
+
+\vspace*{7.5in}
+
+
+\textbf{Comments} 
+
+\begin{itemize}
+\item It is worth noting that $$S = \sqrt{\frac{1}{n-1} \sum\limits_{i=1}^{n}  (X_i - \bar{X})^2}$$ is not an unbiased estimator of $\sigma$. 
+
+\item An important interpretation of equation (\ref{one}) via linear algebra is discussed below. 
+
+Define the vectors 
+$$\mathbf{X}=\left[ \begin{array}{c} X_1\\X_2 \\\vdots \\ X_n \end{array} \right], \  \ \bar{\mathbf{X}} = \left[ \begin{array}{c} \bar{X} \\ \bar{X} \\ \vdots \\ \bar{X} \end{array} \right]. $$
+
+Then equation (\ref{one}) says that
+\begin{eqnarray*}
+|\mathbf{X} - \bar{\mathbf{X}}|^2 &= & |\mathbf{X}|^2 - |\mathbf{\bar{X}}|^2.
+\end{eqnarray*}
+
+
+where $$|\mathbf{u}|^2  = \mathbf{u} \cdot \mathbf{u} = \sum\limits_{i=1}^{n} u^2_i$$  is the \textbf{dot product} of a vector with itself and denotes the squared length of the vector. 
+
+This vector relationship is depicted graphically below. By the converse to the Pythagorean Theorem, this means the vector $\mathbf{X} - \mathbf{\bar{X}}$ is \textbf{orthogonal} to the vector $\mathbf{\bar{X}}$. Symbolically, we write
+$$(\mathbf{X} - \mathbf{\bar{X}}) \perp \mathbf{\bar{X}}.$$
+
+
+\end{itemize}
+
+```{r, echo=F, warning=F, message=F,fig.width=3,fig.height=3,fig.align="center"}
+#install.packages("latex2exp")
+library(latex2exp)
+ggplot(data=data.frame(x = c(-1.5,5),y = c(-1,5)), 
+       mapping = aes(x))  +
+  annotate("segment",x=0,xend=1,y=0,yend=2,
+           arrow=arrow(length=unit(0.25,"cm")))+
+  annotate(geom="text",x=1.05,y=2,
+           label=TeX("$\\mathbf{X}"))+
+  annotate("segment",x=0,xend=1,y=0,yend=1,
+           arrow=arrow(length=unit(0.25,"cm")))+
+  annotate(geom="text", x = 1.05, y = 1,
+           label=TeX("$\\bar{\\mathbf{X}}$"))+
+  annotate("segment", x=0,xend=0,y=0,yend=1, 
+           arrow=arrow(length=unit(0.25,"cm")))+
+  annotate(geom="text",x=0.05,y=1.2,
+           label=TeX("$\\mathbf{X}-\\mathbf{\\bar{X}}$"))+
+  annotate("segment",x=1,xend=1,y=1,yend=2,linetype=3)+
+  annotate("segment", x=0,xend=0.5,y=0,yend=0.5)+
+  annotate("text", x=1,y=1.5,
+           label=TeX("|$\\mathbf{X}-\\mathbf{\\bar{X}}|^2$"))+
+  annotate("text", x=0.5,y=1.1,
+           label=TeX("|$\\mathbf{X}|^2$"))+
+  annotate("text", x=0.5,y=0.35,
+           label=TeX("|$\\mathbf{\\bar{X}}|^2$"))+
+  theme(panel.background=element_blank(),
+        axis.line=element_blank(),
+        axis.ticks=element_blank(),
+        axis.text=element_blank(),
+        axis.title=element_blank())
+
+
+```
+
+
+
+
+
+\dotfill
+
+\noindent \emph{Example 1.1} Define the vectors 
+$$\mathbf{X}=\left[ \begin{array}{c} X_1\\X_2 \\\vdots \\ X_n \end{array} \right], \  
+\ \bar{\mathbf{X}} = \left[ \begin{array}{c} \bar{X} \\ \bar{X} \\ \vdots \\ \bar{X} \end{array} \right]. $$
+
+Verify that $\mathbf{X} - \bar{\mathbf{X}}$ and $\mathbf{\bar{X}}$ are orthogonal vectors, that is, 
+$$(\mathbf{X} - \bar{\mathbf{X}}) \cdot \mathbf{\bar{X}} = 0.$$
+
+\vspace*{2in}
+
+\dotfill
+
+
+\section{The distribution of $S^2$}
+
+It is not enough for our purposes to know that $S^2$ is an unbiased estimator of $\sigma^2$, we also need to know its distribution.
+
+Let's define 
+$$\mathbf{V} = \mathbf{X} - \mathbf{\bar{X}}$$
+to be the difference between the two vectors
+$$\mathbf{X}=\left[ \begin{array}{c} X_1\\X_2 \\\vdots \\ X_n \end{array} \right], \ \bar{\mathbf{X}} = \left[ \begin{array}{c} \bar{X} \\ \bar{X} \\ \vdots \\ \bar{X} \end{array} \right]. $$
+
+Since
+$$|\mathbf{V}|^2 = \sum\limits_{i=1}^{n} (X_i - \bar{X})^2,$$ we can write
+\begin{eqnarray*}
+S^2 &=& \frac{ |\mathbf{V}|^2}{n-1}. 
+\end{eqnarray*}
+
+Our goal is to determine the distribution of $|\mathbf{V}|^2$ and hence of $S^2$. A nifty proof using linear algebra leads to the following result.
+
+
+\begin{shaded}
+\textbf{Theorem 2.1} Suppose $X_1, X_2, \dots, X_n \overset{i.i.d.}{\sim} Norm(\mu, \sigma)$ then 
+$$(n-1) S^2 = |\mathbf{V}|^2 = P^2_2 + P^2_3 + \dots + P^2_{n}$$
+
+where $P_2, P_3,\dots,P_n \overset{i.i.d.}{\sim} Norm(0, \sigma)$.
+\end{shaded}
+
+In this section, we will sketch the proof and review some concepts from linear algebra along the way. We begin by re-expressing the data vector $\mathbf{X}$ in terms of a new coordinate system corresponding to the orthogonal vectors $\left\{ \mathbf{u}_1, \mathbf{u}_2, \dots, \mathbf{u}_n \right\}$, each of unit length as defined below:   
+\begin{itemize}
+\item $\mathbf{u}_1 = \frac{1}{\sqrt{n} } \langle 1,1,1,\dots, 1 \rangle$
+\item $\mathbf{u}_2 = \frac{1}{\sqrt{2} } \langle 1, -1, 0, \dots 0 \rangle$
+\item $\mathbf{u}_3 = \frac{1}{\sqrt{6}} \langle 1, 1, -2, \dots 0 \rangle$
+\item $\mathbf{u}_i = \frac{1}{\sqrt{i (i-1) }} \langle \underbrace{1, 1,\dots,1}_{(i-1) 1's}, 1-i,0,  \dots 0 \rangle, \ i > 2$
+\item $\mathbf{u}_n = \frac{1}{\sqrt{n (n-1) }} \langle 1, 1,\dots, 1, 1-n \rangle$.
+\end{itemize}
+
+This means that instead of writing $\mathbf{X}$ in the standard way as
+$$\left[ \begin{array}{c} X_1 \\ X_2 \\ X_3 \\ \vdots \\ X_n \end{array} \right] = X_1 \left[ \begin{array}{c} 1 \\ 0 \\ 0 \\ \vdots \\ 0 \end{array} \right] + X_2 \left[ \begin{array}{c} 0 \\ 1 \\ 0 \\ \vdots \\ 0 \end{array} \right] + \dots X_n \left[ \begin{array}{c} 0 \\ 0\\ 0 \\ \vdots \\ 1 \end{array} \right]$$
+we write it as 
+$$ \left[ \begin{array}{c} X_1 \\ X_2 \\ X_3 \\ \vdots \\ X_n \end{array} \right] =  P_1 \mathbf{u}_1 + P_2 \mathbf{u}_2 + \dots + P_n \mathbf{u}_n.$$
+where the $\mathbf{u}$'s are as defined above.  
+
+$P_1, P_2, \dots, P_n$ are referred to as the coordinates of $\mathbf{X}$ in this new system and we calculate each $P_i$ by \emph{projecting} - dropping a perpendicular - from $\mathbf{X}$ onto  $\mathbf{u}_i$. 
+
+The figure below illustrates the idea for generic vectors $\mathbf{x}$ and $\mathbf{u}$.
+
+```{r, echo=F, warning=F,message=F,fig.width=2.3,fig.height=2.3,fig.align="center"}
+
+ggplot(data=data.frame(x=c(0,3),y=c(0,3)), mapping=aes(x))  +
+  annotate("segment",x=0,xend=0.25,y=0,yend=0.4,
+           arrow=arrow(length=unit(0.25,"cm")))+
+  annotate(geom="text",x=0.25,y=0.42,label=TeX("$\\mathbf{x}$"))+
+  annotate("segment",x=0,xend=0.2,y=0,yend=0.1,
+           arrow=arrow(length=unit(0.25,"cm")))+
+  annotate(geom="text",x=0.21,y=0.1,label=TeX("\\mathbf{u}"))+
+  annotate(geom="segment", x=0.2,xend=0.25,y=0.1,yend=0.12,linetype="dashed",
+           arrow=arrow(length=unit(0.25,"cm"),type="closed"))+
+  annotate(geom="segment",
+           x=0.25,xend=0.25,y=0.12,yend=0.4, linetype="dashed")+
+  #annotate(geom="segment",
+   #        x=0, xend=0.25,y=-0.02,yend=0.1,linetype="dotted")+
+  #annotate(geom="segment",x=0,xend=0,y=-0.03,yend=-0.01)+
+  #annotate(geom="segment",x=0.25,xend=0.25,y=0.09,yend=0.11)+
+  annotate(geom="text",x=0.27,y=0.13,size=2,
+           label=TeX("$P \\times \\mathbf{u}$"))+
+  theme(panel.background=element_blank(),axis.line=element_blank(),axis.ticks=element_blank(),axis.text=element_blank(),axis.title=element_blank())
+
+```
+
+The vector $P \times \mathbf{u}$ is referred to as the \textbf{projection} of $\mathbf{x}$ in the direction of $\mathbf{u}$:
+$$proj( \mathbf{x} \rightarrow \mathbf{u}) = P \times \mathbf{u}.$$
+
+
+\begin{shaded}
+\textbf{Lemma 2.1:} Let $\mathbf{u}$ be a vector and $\mathbf{x}$ a vector which we will project in the direction of $\mathbf{u}$. Then 
+$$proj( \mathbf{x} \rightarrow \mathbf{u}) = P \times \mathbf{u},$$
+where $$P = \frac{\mathbf{x} \cdot \mathbf{u}}{\mathbf{u} \cdot \mathbf{u}}.$$
+\end{shaded}
+\vspace*{4in}
+
+
+\dotfill
+
+\noindent \emph{Example 2.1}  Let $P_1$ denote the length of the projection of the data vector $\mathbf{X}=\langle x_1, x_2, \dots, x_n \rangle$ in the direction of $\mathbf{u}_1=\frac{1}{\sqrt{n} } \langle 1,1,1,\dots, 1 \rangle$, that is 
+\begin{align*}
+ proj(\mathbf{X} \rightarrow \mathbf{u}_1) &= P_1 \times \mathbf{u}_1.
+\end{align*}
+
+Show that $P_1 = \sqrt{n} \bar{X}$. 
+\vspace*{2in}
+
+\dotfill
+
+\faLaptop  
+
+\noindent \emph{Example 2.2}
+
+ The `project` function in **mosaic** can be used to compute projection vectors. 
+
+
+```{r}
+x<-c(3, 4, 4, 7, 8)
+u1<-c(1, 1, 1, 1,1)/sqrt(5)
+mean(x)
+
+project(x, u1)   #library(fastR2)
+
+```
+
+Find the projection of $x = \langle 3, 4, 4, 7, 8 \rangle$ on the vector $u_2 = \frac{1}{\sqrt{2}} \langle 1, -1, 0, 0, 0 \rangle$ 
+by hand and then verify it in R.
+
+\vspace*{2in}
+
+\dotfill
+
+\noindent \textbf{Comments}
+\begin{itemize}
+\item Notice that since 
+$$\mathbf{V} = \mathbf{X} - \mathbf{\bar{X} }  = P_1 \mathbf{u}_1 + P_2 \mathbf{u}_2 + \dots + P_n \mathbf{u}_n - \mathbf{\bar{X}},$$ 
+we get the result that 
+$$\mathbf{V} = \sum\limits_{i=2}^{n} P_i \: \mathbf{u}_i.$$
+\vspace*{1in}
+
+In other words, the vector $\mathbf{V}$ is the sum of $(n-1)$ terms, not $n$. Furthermore, since the vectors $\mathbf{u}_2, \dots, \mathbf{u}_n$ are orthogonal to each other and also of unit length, we get that
+\begin{eqnarray}
+|\mathbf{V}|^2 &=& \sum\limits_{i=2}^{n} P^2_i \label{two}
+\end{eqnarray}
+\vspace*{3in}
+
+\end{itemize}
+
+The derivations so far show that the sample variance may be expressed as:
+$$(n-1) S^2 = \sum\limits_{i=2}^{n} P^2_i$$  
+where the projection coordinates $P_i$ are given by 
+$$P_i = \mathbf{X} \cdot \mathbf{u}_i, \ i=2, 3, \dots, n.$$ 
+
+It is clear that in order to derive the distribution of $S^2$, we need to know the distribution of the dot product of a random vector ($\mathbf{X}$) with a fixed (non-random) unit vector ($\mathbf{u}_i$). This is stated below without proof when the $X_i$ are normally distributed.
+
+\begin{shaded}
+\textbf{Lemma 2.2} Suppose $X_1, X_2, \dots, X_n \overset{i.i.d.}{\sim} Norm(\mu, \sigma)$ and let $\mathbf{u}=\langle u_1, u_2, \dots, u_n \rangle$ be a non-random (unit) vector in $\mathbb{R}^n$. Then
+\begin{eqnarray*}
+\mathbf{X} \cdot \mathbf{u} & = & \sum\limits_{i=1}^{n} X_i u_i \\
+&\sim & Norm( \mu \sum\limits_{i=1}^{n} u_i, \sigma).
+\end{eqnarray*}
+
+Also $\mathbf{X} \cdot \mathbf{u}$ is independent of $\mathbf{X} \cdot \mathbf{v}$ if and only if $\mathbf{u} \perp \mathbf{v}$. 
+\end{shaded}
+
+
+\dotfill
+
+\noindent \emph{Example 2.3} Apply Lemma 2.2 to find the distribution of 
+$$P_2 = \mathbf{X} \cdot \mathbf{u}_2$$ 
+where $u_2 = \frac{1}{2} \langle 1, -1, 0, \dots, 0 \rangle$. 
+\vspace*{2in}
+
+\dotfill
+
+Since the components of each $\mathbf{u}_i$ vector add to 0, we can apply Lemma 2.2 to show 
+$$P_i = \mathbf{X} \cdot \mathbf{u}_i  \sim  Norm(0, \sigma).$$
+
+<!--- each $\mathbf{u}_i \perp \mathbf{u}_1$ where $\mathbf{u}_1=\frac{1}{\sqrt{n} } \langle 1,1,\dots, 1 \rangle$, 
+\begin{eqnarray*}
+\mathbf{u}_i \cdot \mathbf{u}_1 &=& u_{i1}+u_{i2}+\dots+u_{in},\\
+&=& 0.
+\end{eqnarray*}
+--->
+
+Also $P_i$ is independent of $P_j$ for $i \neq j$ since the vectors $\mathbf{u}_i$ and $\mathbf{u}_j$ on which they are based are orthogonal. 
+
+And therefore we have sketched the proof of why $(n-1) S^2$ can be expressed as the  sum of $(n-1)$ independent random variables, each of which is the square of a normal random variable with mean 0 and standard deviation $\sigma$. 
+
+
+
+\subsection{Practice Problems}
+
+1. Define the vectors $\mathbf{u}_i$ as follows. 
+\begin{itemize}
+\item $\mathbf{u}_1 = \frac{1}{\sqrt{4} } \langle 1,1,1,1, \rangle$
+\item $\mathbf{u}_2 = \frac{1}{\sqrt{2} } \langle 1, -1, 0, 0 \rangle$
+\item $\mathbf{u}_3 = \frac{1}{\sqrt{6}} \langle 1, 1, -2,  0 \rangle$
+\item $\mathbf{u}_4 = \frac{1}{\sqrt{12 }} \langle 1, 1,1, -3\rangle$
+\end{itemize}
+
+  a.  Show that the vectors above are orthonormal. That is, show that they are pairwise orthogonal and of unit length.
+
+  b. Notice that the sums of the coefficients of $\mathbf{u}_2$, $\mathbf{u}_3$ and $\mathbf{u}_4$ are zero. What property of $\mathbf{u}_1, \mathbf{u}_2, \mathbf{u}_3, \mathbf{u}_4$ makes this happen?
+  
+  c. What does this tell us about the distribution of the projection coefficients $$P = \mathbf{X} \cdot \mathbf{u}$$ under these conditions?
+
+2.  Let $\mathbf{x} = \langle 3, 4,5, 8 \rangle$ and let $\mathbf{u}_i$ be as defined above for $i=1,\dots,4$. Define
+\begin{eqnarray*}
+p_i &=& \mathbf{x} \cdot \mathbf{u}_i, 
+\end{eqnarray*}
+as the coordinates of $\mathbf{x}$ with respect to the coordinate system defined by the vectors $\left\{ \mathbf{u}_1,\dots,\mathbf{u}_4 \right\}$.
+
+
+  a.  Determine the coordinates $p_i$ and verify that 
+$$\mathbf{x} = \sum\limits_{i=1}^{4} p_i \mathbf{u}_i.$$
+
+  b.  Calculate the sample variance $s^2$ using R for this dataset. Verify that $s^2= \frac{1}{3} \sum\limits_{i=2}^{4} p^2_i$.
+  
+
+
+\newpage
+
+\section{Chi-squared distributions}
+
+The distribution of the sum of squares of i.i.d. normal random variables is important enough to warrant its own name. 
+
+\begin{shaded}
+\textbf{Definition 3.1} Let $Z_1, Z_2, \dots, Z_n \overset{i.i.d.}{\sim} Norm(0,1)$. Then 
+$$Z^2_1 + Z^2_2 + \dots + Z^2_n$$
+has a \textbf{chi-square distribution} with \textbf{$n$ degrees of freedom}.
+
+We denote this by $Chisq(n)$.
+\end{shaded}
+
+A chi-squared pdf is a member of the Gamma family. Since this is a familiar distribution from STAT 340, it needs no further introduction. The PDF and the first and second moments of this distribution are stated below for reference.
+
+\begin{shaded}
+\textbf{Lemma 3.1}
+$$ If \ X \sim Chisq(n). \ \ Then \ X \sim Gamma(\alpha = \frac{n}{2}, \lambda=\frac{1}{2}).$$ The PDF of $X$ is shown below:
+\begin{eqnarray*}
+f(x) &=& \frac{1}{\Gamma(n/2) 2^{n/2}}\: x^{n/2-1} exp(-x/2), \ \ 0 < x < \infty.
+\end{eqnarray*}
+
+\textbf{Lemma 3.2} Let $X \sim Chisq(n)$. Then 
+\begin{itemize}
+\item $E\left[X \right]=n$ 
+\item $Var\left[X \right]=2n$.
+\end{itemize}
+
+\end{shaded}
+
+The $R$ commands \texttt{dchisq}, \texttt{pchisq} and \texttt{qchisq} can be used to calculate the PDF, CDF and quantiles of a chi-square distribution. 
+
+
+\dotfill
+
+\faLaptop  
+\noindent \emph{Example 3.1} Use $R$ to answer the following. 
+\begin{enumerate}
+\item[(a)] Find the 95th percentile of a $Chisq(14)$.
+
+\item[(b)] Calculate $P(X \geq 8.672)$ where $X \sim Chisq(17)$.
+
+\item[(c)] Suppose $X \sim Chisq(n)$. Find the smallest $n$ for which $P(X \geq 5.009) \geq 0.975$? 
+
+\end{enumerate}
+
+
+```{r, eval=F,echo=F}
+
+df<-seq(1,50,1)
+plot(df,1-pchisq(5.009,df))
+uniroot(f=function(x){ 1 - pchisq(5.009,df=x) - 0.975}, lower=0,upper=20)
+
+```
+\dotfill
+
+Using the chi-squared distribution, we can succinctly express the result we have been working towards in the previous section.
+
+\begin{shaded}
+\textbf{Lemma 3.3} Let $X_1, X_2, \dots, X_n \overset{i.i.d.}{\sim} Norm(\mu, \sigma)$. Then
+\begin{itemize}
+\item $\frac{(n-1) S^2}{\sigma^2} = \frac{1}{\sigma^2} \sum\limits_{i=1}^{n} (X_i - \bar{X})^2 \sim Chisq(n-1)$.
+\item $\bar{X}$ and $S^2$ are independent random variables.
+\end{itemize}
+\end{shaded}
+
+\vspace*{3in}
+
+
+\noindent \textbf{Comment} Notice that $\frac{(n-1) S^2}{\sigma^2}$ is a pivotal quantity and therefore can be used to make inference about $\sigma$.
+
+\dotfill
+
+\noindent \emph{Example 3.2} When working properly, the amount of cement that a filling machine puts into 25 k.g. bags has a standard deviation $\sigma=1.0$ k.g. Suppose the sample variance of the weights of 30 randomly selected bags is $s^2=0.425$ k.g.  Assume that the weights are normally distributed. Calculate a 95\% confidence interval for the population standard deviation based on this sample. 
+\vspace*{4in}
+
+\subsection{Practice Problems}
+
+\begin{enumerate}
+\item R question: Let $X_1, X_2, \dots, X_n \overset{i.i.d.}{\sim} dnorm(mean=\mu, sd=\sigma)$. What is the smallest value of $n$ for which the following is true? 
+\begin{eqnarray*}
+P\left( \frac{S^2}{\sigma^2} < 2 \right) &\geq & 0.95?
+\end{eqnarray*}
+
+(\emph{Hint:} use uniroot)
+
+\item If a 90\% confidence interval for $\sigma^2$ is reported to be $[51.47, 261.90]$, what is the value of the sample standard deviation? 
+\end{enumerate}
+
+
