@@ -1,0 +1,150 @@
+---
+title: "Quiz 04/11 R Code"
+output:
+  pdf_document: 
+    fig_width: 5
+    fig_height: 3
+date: '2022-04-11'
+---
+
+```{r,message=FALSE,warning=FALSE,echo=F}
+library(tidyverse)
+library(ggridges)
+library(infer)
+library(fastR2)
+```
+
+# Problem 1.2
+
+Construct 95% CI's for the mean ratio of Sepal.Length and Sepal.Width for each species found in the Iris dataset.
+
+First we may do some exploratory data analysis on these values to determine if a t-test is appropriate. 
+
+Using glimpse is always a good way to examine what your data looks like before moving on to visualizations.
+
+```{r}
+glimpse(iris)
+```
+
+For our visualizations may begin with a faceted histogram. (For binwidth see: Sturges rule or alternatively use (range of data)/sqrt(n) ).
+
+```{r}
+#pipe data into ggplot
+iris %>%
+  #mapping defines what variables
+  #y=..density.. is optional, it just normalizes the histogram heights for easier comparisons
+  ggplot(mapping = aes(x=Sepal.Length/Sepal.Width, y=..density..))+
+  #geom_histogram layer adds histogram with specified binwidth
+  geom_histogram(binwidth = .1)+
+  #facet_wrap by categorical variable for divided plots by category
+  facet_wrap(~Species) +
+  ggtitle('Faceted Histogram of Sepal Length to Width Ratio by Species')
+```
+
+From these plots, we see some symmetry, however it is difficult to truly see the shape of distributions. We can also crate a box-plot to view if there are a large amount of outliers. 
+
+```{r}
+#fill creates coloring + legend
+ggplot(iris,aes(x=Sepal.Length/Sepal.Width,y=Species,fill=Species))+
+  #boxplot layer adds boxplot
+  geom_boxplot()+
+  ggtitle("Box-plot of Sepal Length to Width by Species")
+```
+
+There are a few outliers, but nothing too drastic so we can choose to keep them in the dataset. If there were a large amount of outliers, some data cleaning may be necessary. 
+
+Let's use a qqplot to now view the normality of our data. 
+
+```{r}
+iris %>%  
+  #gf_qq graphs qq plots for ~variable and facets by Species using the |
+  gf_qq(~Sepal.Length/Sepal.Width | Species) %>% 
+  #qqline adds normal qq lines to see how much data differs from a normal dist
+  gf_qqline()
+```
+
+These all look relatively decent (the points fit the line), but we can view the points visually as well in density ridge plots.
+
+From the ridge plots we can see that the data looks relatively normal and a t-test is appropriate. (Optional Exercise: try to match up what you see in the qqplot with the density ridge plot).
+
+```{r}
+ggplot(iris,aes(x=Sepal.Length/Sepal.Width,y=Species,fill=Species))+
+  geom_density_ridges()+
+  ggtitle("Density Ridge plot of Sepal Length to Width by Species")
+```
+
+We can now calculate some summary statistics to find these confidence intervals. 
+
+```{r}
+species_stats <-  iris %>% 
+  #group_by categorical variable (Species so we can get info for 3 different CI's)
+  group_by(Species) %>% 
+  #use summarize to find summary stats
+  summarize(ratio_mean = mean(Sepal.Length/Sepal.Width),
+            ratio_sd = sd(Sepal.Length/Sepal.Width),
+            #n() finds sample size
+            n())
+species_stats
+```
+
+With this we have all the information we need to construct a 95% confidence interval using the t-distribution.
+
+$$
+\bar{X} \pm t_{\alpha/2=.05/2,n-1=49}\frac{S}{\sqrt{n}}
+$$
+We obtain the following 95% confidence intervals:
+
+```{r}
+n <-  50
+alpha <-  .05
+t_95 <-  qt(1-alpha/2,df=n-1)
+
+#storing S and X_bar values in vectors
+sd_species <- species_stats$ratio_sd
+mean_species <- species_stats$ratio_mean
+
+#calculate bounds according to formula
+lower_CI <- mean_species - t_95*(sd_species/sqrt(n))
+upper_CI <- mean_species + t_95*(sd_species/sqrt(n))
+data.frame(species_stats$Species,lower_CI,upper_CI)
+```
+
+To confirm our answers, we may use t_test from the `infer` package to calculate the intervals as well. 
+
+```{r}
+#For Setosa
+
+iris %>% filter(Species=='setosa') %>% 
+  #mutate new variable (create new column)
+  mutate(ratio = Sepal.Length/Sepal.Width) %>%
+  #within t_test we set a response=variable for CI, and a conf.level
+  #response=Sepal.Length/Sepal.Width would not work, as the variable must be in the df for t_test
+  #so we require the mutate
+  infer::t_test(response=ratio, conf.level=.95) %>% 
+  #selecting/mutating variables for cleaner output
+  mutate(Species='setosa CI') %>% 
+  select(Species, lower_ci,upper_ci)
+
+#For Versicolor
+
+iris %>% filter(Species=='versicolor') %>% 
+  mutate(ratio = Sepal.Length/Sepal.Width) %>% 
+  infer::t_test(response=ratio, conf.level=.95) %>% 
+  mutate(Species='versicolor CI') %>% 
+  select(Species, lower_ci,upper_ci)
+
+#For Virginica
+
+iris %>% 
+  filter(Species=='virginica') %>% 
+  mutate(ratio = Sepal.Length/Sepal.Width) %>% 
+  infer::t_test(response=ratio, conf.level=.95) %>% 
+  mutate(Species='virginica CI') %>% 
+  select(Species, lower_ci,upper_ci)
+
+```
+
+
+
+```
+
