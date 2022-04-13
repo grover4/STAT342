@@ -1,0 +1,61 @@
+---
+title: "Robustness of t confidence intervals"
+author: "YOUR NAME"
+date: "4/13/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(mosaic)
+library(infer)
+library(fastR2)
+
+```
+
+In this investigation, you will examine the coverage probability of t confidence intervals when the data $X_1, X_2, \dots, X_n$ do not arise from a normal distribution.  
+
+1. 
+a. Use `CISim` from the **mosaic** package to calculate the coverage probability of 95% confidence intervals for 1,000 samples of size $n=5, 10,  30$ from an exponential distribution with rate $\lambda = 1/10$. Be sure to set the seed to 16313. 
+
+```{r simulate-exponential}
+#code here
+
+```
+
+b. Is the coverage close to 95%? If not, do your intervals miss the true mean because they tend to be below it? Or above it? 
+
+2. In the following code chunk, I have  written a function called `tcalc` which calculates the t-ratios 
+$$t = \frac{ \sqrt{n}( \bar{X} - 10)}{S}$$
+a sample of size $n$. Using the `replicate` function, I then repeatedly evaluate `tcalc` 1,000 times and save the result in a tibble called `simdata`.
+
+  Use `ggplot` to make a histogram of the t-ratios. Does the distribution look like a t? If not, what's the problem with it. 
+
+```{r calculate-tratio}
+
+tcalc <- function(x, mu0){
+  #calculate t = sqrt(n) (xbar - mu0)/s 
+  n = length(x)
+  xbar = mean(x)
+  s = sd(x)
+  t = sqrt(n)*(xbar - mu0)/s
+  return(t)
+}
+
+simdata <- tibble(
+  #generate X1, X2, ..., X5 from Exp(lambda = 1/10) and calculate tcalc
+  #replicate 1000 times
+  t = replicate( n = 1000, 
+                 expr = tcalc(rexp(n = 5, rate=1/10), mu0 = 10)  )
+  
+)
+
+
+```
+
+3. Use your histogram from 2. to better understand the behavior of the confidence intervals from 1.
+
+
+
+4. Repeat exercises 1 and 2 for data which arises from a Uniform(-1,1). 
