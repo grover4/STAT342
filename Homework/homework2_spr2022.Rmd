@@ -1,0 +1,97 @@
+---
+title: "Take Home 2"
+subtitle: "Spring 2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This homework is due on Tuesday April 19 by midnight PST.
+
+\textbf{Instructions}: Follow each one diligently. 
+\hrule
+\begin{enumerate}
+	\item Please type your answers and upload as a PDF in Gradescope. If you prefer to write your answers, we will accept handwritten work provided it is legible. If you decide to go this route, be sure to [scan](https://www.camscanner.com) and upload a single file.  
+	\item Write your full name (as it appears in the grade book) on the first page, preferably as a running header on each page if you are writing by hand.
+	\item Answer the questions in order and number them as I have here. 
+	\item \textbf{Write complete answers which includes justifications for steps and/or references to results you use. This is really important.You all need to practice writing mathematical answers - define notation, explain what you are doing, cite any rules, etc. }
+	\item Clearly indicate your final answer. Put a frame around it where appropriate.
+	\item \textbf{For questions that involve coding, you must include code and not just the answers. } 
+\end{enumerate}
+\hrule 
+
+\textbf{Rule on collaboration:} You may discuss the answers in general terms with your peers and even guide someone who is stuck by giving high level advice. However, you are expected to write up your answers individually and entirely in your own words. 
+
+1. (1 point) Problem 4.48 on page 340: Suppose you want to estimate the mean shoe size of adults in a Big City. You would like to have   a 95\% t confidence interval that is no wider than 0.5 shoe sizes. (The margin of error  $t_{0.025} \times \frac{s}{\sqrt{n}}$  would be at most 0.25.)
+
+   a. This calculation will require you to guess the standard deviation $s$. What are the implications of guessing too high? Guessing too low? 
+   
+   b. Should you include both men and women in your sample or just one or the other? Why? (\emph{Hint:} Think about the assumptions of the t confidence interval.)
+   
+   c. Suppose you estimate that the standard deviation is 2. How large must your sample be to get the desired confidence interval? Show your work.
+   
+2. A 95% confidence interval - computed using `t.test` - for the mean weight gain of 9 adult mice on a certain diet is $[11.2, 54.7]$. 
+
+   a. What was the mean weight gain of the mice in the study?
+   
+   b. Calculate the p-value of a hypothesis test with a null hypothesis that there is no weight gain (on average) for mice on this diet. (Show your work carefully)
+   
+3. (2 points) In class we saw from our robustness studies that the $t$ confidence intervals did not work too well for \underline{small} samples taken from $Exp(\lambda=\frac{1}{10})$, so we would like to develop an exact confidence interval for this situation.
+	
+	Suppose $X_1,X_2,\dots,X_n \overset{i.i.d.}{\sim} Exp(\lambda)$. Then it can be shown that:
+	$$Y = \lambda \bar{X} \sim Gamma(n, n).$$ 
+	(You don't have to prove this)  That is, you are given that $Y$ is a pivotal quantity - distribution does not depend on $\lambda$ - and its PDF is given by
+	\begin{eqnarray*}
+	f(y) &=& \frac{n^n}{\Gamma(n)} y^{n-1} e^{-n y }, \ \ y > 0.
+	\end{eqnarray*}
+	
+	a.  Use the distribution of $Y$ to construct a \emph{equal tailed} 95% confidence interval for the mean $\mu = \frac{1}{\lambda}$. (You may leave $q_1$ and $q_2$ in terms of the R function that will be used to calculate them.)
+
+	b.  Let's use simulations to verify the coverage probability of your interval. 
+	\begin{itemize}
+	 \item Write a function \texttt{expci} which takes a data vector \texttt{x} and returns the confidence interval from part a and also the estimate $\bar{x}$. 
+  \item Use \texttt{CIsim} to generate 5,000 samples, each of size 5 from $Exp(\lambda=\frac{1}{10})$ and calculate the confidence interval using your function. Be sure to \textbf{set.seed = 500}. 
+  \item Show your code and then write a short, clear paragraph commenting on the coverage probability of the exact confidence interval.
+  \end{itemize}
+
+The following code template from STAT 341 may help jog your memory. 
+
+```{r, eval=F}
+set.seed(500)
+
+zci <- function(x, sd = 1, conf.level = 0.95){
+  n=length(x)     
+  xbar=mean(x)
+  alpha=1-conf.level
+  zscore= -qnorm(alpha/2)       #z_{alpha/2}
+  interval=xbar + c(-1,1)*zscore*sd/sqrt(n)
+  
+  return(list(conf.int=interval, estimate=xbar)) 
+}
+
+CIsim(n = 5,                            
+      samples = 5000,                
+      rdist = rnorm,                  
+      args = list(mean = 3, sd = 2),            
+      estimand = 3,     
+      method = zci,
+      method.args = list(sd = 2))
+```
+
+4. (2 points) Problem 4.50 on page 341
+
+  The `chickwts` data from the \textbf{fastR2} package presents the  results of an experiments in which chickens are fed six different diets. If we assume that the chickens were randomly selected from some population of chickens and were also assigned to the feed groups at random, then for each feed, we can consider the chickens fed that feed to be a random sample from the (theoretical) population  that would result from feeding all chickens that feed.
+
+   a. For each of the six feeds, calculate 95% confidence intervals for the mean weight of all chicken fed that diet. Write them one below the other neatly labeled. (You may use `t_test` from **infer** to perform the calculations, select the end points of the interval  and display those. )
+   
+   b. From an examination of the six resulting confidence intervals, is there some evidence that some diets are better than others? Explain.
+     
+   c. Since you no doubt used the $t$ distribution to generate the confidence intervals in part (a), you might wonder whether it is appropriate. Are there any features in the data that might suggest this might not be appropriate?  
+   
+  - Make side by side boxplots and density ridge plots of the weight by feed. 
+   
+  - Make normal qqplots to compare the distribution of the weight for each feed to assess the normality assumption. See example 3.6.3 on page 177 to see how to go about this.
+   
+   - Then write a short paragraph summarizing what you have learned from your explorations.
