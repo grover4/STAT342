@@ -47,42 +47,41 @@ This homework is due on Tuesday April 19 by midnight PST.
 	f(y) &=& \frac{n^n}{\Gamma(n)} y^{n-1} e^{-n y }, \ \ y > 0.
 	\end{eqnarray*}
 	
-	a.  Use the distribution of $Y$ to construct a \emph{equal tailed} 95% confidence interval for the mean $\mu = \frac{1}{\lambda}$. (You may leave $q_1$ and $q_2$ in terms of the R function that will be used to calculate them.)
+	a.  Use the distribution of $Y$ to construct an \emph{equal tailed} 95% confidence interval for the mean $\mu = \frac{1}{\lambda}$. (You may leave $q_1$ and $q_2$ in terms of the R function that will be used to calculate them.)
 
 	b.  Let's use simulations to verify the coverage probability of your interval. 
 	\begin{itemize}
 	 \item Write a function \texttt{expci} which takes a data vector \texttt{x} and returns the confidence interval from part a and also the estimate $\bar{x}$. 
   \item Use \texttt{CIsim} to generate 5,000 samples, each of size 5 from $Exp(\lambda=\frac{1}{10})$ and calculate the confidence interval using your function. Be sure to \textbf{set.seed = 500}. 
-  \item Show your code and then write a short, clear paragraph commenting on the coverage probability of the exact confidence interval.
+  \item Show your code and then comment on the coverage probability of the exact confidence interval.
   \end{itemize}
 
-The following code template from STAT 341 may help jog your memory. 
+   The following code from STAT 341 may help jog your memory. 
 
-```{r, eval=F}
-set.seed(500)
+   ```{r, eval=F}
 
-zci <- function(x, sd = 1, conf.level = 0.95){
-  n=length(x)     
-  xbar=mean(x)
-  alpha=1-conf.level
-  zscore= -qnorm(alpha/2)       #z_{alpha/2}
-  interval=xbar + c(-1,1)*zscore*sd/sqrt(n)
+   zci <- function(x, sd = 1, conf.level = 0.95){
+     n=length(x)     
+     xbar=mean(x)
+     alpha=1-conf.level
+     zscore= -qnorm(alpha/2)       #z_{alpha/2}
+     interval=xbar + c(-1,1)*zscore*sd/sqrt(n)
   
-  return(list(conf.int=interval, estimate=xbar)) 
-}
+     return(list(conf.int=interval, estimate=xbar)) 
+   }
 
-CIsim(n = 5,                            
+   CIsim(n = 5,                            
       samples = 5000,                
       rdist = rnorm,                  
       args = list(mean = 3, sd = 2),            
       estimand = 3,     
       method = zci,
       method.args = list(sd = 2))
-```
+   ```
 
 4. (2 points) Problem 4.50 on page 341
 
-  The `chickwts` data from the \textbf{fastR2} package presents the  results of an experiments in which chickens are fed six different diets. If we assume that the chickens were randomly selected from some population of chickens and were also assigned to the feed groups at random, then for each feed, we can consider the chickens fed that feed to be a random sample from the (theoretical) population  that would result from feeding all chickens that feed.
+   The `chickwts` data from the \textbf{fastR2} package presents the  results of an experiments in which chickens are fed six different diets. If we assume that the chickens were randomly selected from some population of chickens and were also assigned to the feed groups at random, then for each feed, we can consider the chickens fed that feed to be a random sample from the (theoretical) population  that would result from feeding all chickens that feed.
 
    a. For each of the six feeds, calculate 95% confidence intervals for the mean weight of all chicken fed that diet. Write them one below the other neatly labeled. (You may use `t_test` from **infer** to perform the calculations, select the end points of the interval  and display those. )
    
@@ -90,8 +89,8 @@ CIsim(n = 5,
      
    c. Since you no doubt used the $t$ distribution to generate the confidence intervals in part (a), you might wonder whether it is appropriate. Are there any features in the data that might suggest this might not be appropriate?  
    
-  - Make side by side boxplots and density ridge plots of the weight by feed. 
+       - Make side by side boxplots and density ridge plots of the weight by feed. 
    
-  - Make normal qqplots to compare the distribution of the weight for each feed to assess the normality assumption. See example 3.6.3 on page 177 to see how to go about this.
+       - Make normal qqplots to compare the distribution of the weight for each feed to assess the normality assumption. See example 3.6.3 on page 177 to see how to go about this.
    
-   - Then write a short paragraph summarizing what you have learned from your explorations.
+       - Then write a short paragraph summarizing what you have learned from your explorations.
