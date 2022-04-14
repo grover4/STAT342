@@ -32,13 +32,13 @@ This homework is due on Tuesday April 19 by midnight PST.
    
    c. Suppose you estimate that the standard deviation is 2. How large must your sample be to get the desired confidence interval? Show your work.
    
-2. A 95% confidence interval - computed using `t.test` - for the mean weight gain of 9 adult mice on a certain diet is $[11.2, 54.7]$. 
+2. (1 point) A 95% confidence interval - computed using `t.test` - for the mean weight gain of 9 adult mice on a certain diet is $[11.2, 54.7]$. 
 
    a. What was the mean weight gain of the mice in the study?
    
    b. Calculate the p-value of a hypothesis test with a null hypothesis that there is no weight gain (on average) for mice on this diet. (Show your work carefully)
    
-3. (2 points) In class we saw from our robustness studies that the $t$ confidence intervals did not work too well for \underline{small} samples taken from $Exp(\lambda=\frac{1}{10})$, so we would like to develop an exact confidence interval for this situation.
+3. (1 point) In class we saw from our robustness studies that the $t$ confidence intervals did not work too well for \underline{small} samples taken from $Exp(\lambda=\frac{1}{10})$, so we would like to develop an exact confidence interval for this situation.
 	
 	Suppose $X_1,X_2,\dots,X_n \overset{i.i.d.}{\sim} Exp(\lambda)$. Then it can be shown that:
 	$$Y = \lambda \bar{X} \sim Gamma(n, n).$$ 
