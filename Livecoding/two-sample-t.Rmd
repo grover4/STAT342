@@ -1,0 +1,38 @@
+---
+title: "Two sample t tests"
+author: "YOUR NAME"
+date: "4/15/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fastR2)
+library(tidyverse)
+```
+
+Can pleasant aromas help a student learn better? Hirsch and Johnston of the Smell & Taste Treatment and Research Foundation believe that the presence of a floral scent can improve a person's learning ability in certain situations. In their experiment, 22 people worked through a set of pencil and paper mazes six times, three times while wearing a floral scented mask and three times wearing an unscented mask. Individuals were randomly assigned  to wear either the floral mask either during their first three tries or their last three tries. Participants put on their masks one minute before starting the first trial in each group to minimize any distracting effects. Testers measured the length of time it took subjects to complete each of the six trials.
+
+
+The data are available in the `scent` dataset from the **fastR2** package. 
+
+1. Load the dataset by typing `data(scent)` in the Console. Also Read the help file by typing `?scent`.
+
+2. The variable `first` indicates which treatment was first, *scented* or *unscented*. If the randomization was successful, we should not see large differences between the groups on the \emph{pre-treatment variables} such as `age`, `sex`, `smoker`. 
+
+(i) Was the randomization successful? Examine the difference in `age` between the groups. Do the following to answer this question. 
+
+   a. Make side-by-side boxplots of `age` by `first`. 
+ 
+   b. Calculate the mean and standard deviation of `age` by `first`.
+ 
+   c. Conduct a two-sample t test to investigate if the differences in mean `age` can be explained by the chances of random assignment. Or is the difference statistically significant?
+
+
+2. Let's now examine whether floral scents helps students learn better. Since we have three measurements under each condition for a student, our outcome will be the average time taken to complete the task. 
+
+
+  a. Make a side-by-side box plot of the time under `floral` versus `unscented`. (Hint: You will need to convert the data set into a long format first. )
+  
+  b. Conduct a paired t-test to answer the question. 
+  
