@@ -1,0 +1,109 @@
+---
+title: "Quiz 04/18 Ex 4.1"
+output: pdf_document
+date: '2022-04-17'
+---
+
+```{r setup, include=FALSE, message=F,warning=F}
+library(tidyverse)
+library(fastR2)
+brain_wts <- read.csv("brain_weights.csv")
+```
+
+Does the psychological environment affect the anatomy of the brain? The subjects for one study came from a genetically pure strain of rats. From each litter (family), one rat was selected at random for the treatment group and one for the control group. Both groups got the same food and drink -- as much as they wanted. But each animal in the treatment group lived with 11 others in a cage, furnished with playthings which were changed daily. Animals in the control group lived in isolation, with no toys. After a month, all animals were sacrificed and their cortex weights measured. The dataset is in the file brain-weights.csv.
+
+a.  Why did the investigators decide to assign one member of each litter to treatment and another member from the same litter to the control group?
+
+
+b.  Explore these data by making scatterplots, a boxplot, and calculating some summary statistics.
+
+Scatterplot:
+
+```{r, message=FALSE}
+#create variable mapping in ggplot OR geom_point layer
+ggplot(brain_wts, mapping = FILL_IN)+
+  geom_point()+
+  #layer least squares (lm=linear method) line
+  #see what se=TRUE does for youself
+  geom_smooth(method='lm',se=FALSE)+
+  labs(title='Scatterplot of Treatment vs Control Brain Weights',
+       x='Control',
+       y='Treatment')
+```
+
+Boxplot:
+
+```{r}
+#See pg 13 of inf_var_mean_unknown notes
+
+#change dataframe to long format
+brain_wts_long <-pivot_longer(data = brain_wts,
+                        cols = 2:3, names_to = "Group",
+                        values_to = "Weights")
+```
+
+```{r}
+ggplot(data = brain_wts_long,
+       #define boxplot mapping
+       mapping = aes(x = Group, y = Weights,))+
+  #add fill for boxplot color
+  geom_boxplot(mapping = aes(fill = Group))+
+  #will automatically plot x and y from the ggplot aes() mapping
+  geom_point()+
+  #create lines between pairs by using group arg in aes()
+  geom_line(mapping = aes(group = pair), color="gray", size=0.4)
+```
+
+Summary Stats:
+
+```{r}
+brain_wts %>% summarize(mean_treatment = mean(treatment),
+                        sd_treatment = sd(treatment),
+                        mean_control = mean(control),
+                        sd_control = sd(control),
+                        mean_difference = mean(treatment-control),
+                        sd_difference = sd(treatment-control))
+```
+
+
+c.  The goal is to examine if the treatment increases cortex weight. Two different analytic strategies are described below. 
+
+• Method 1: Dichotomize the data for each pair as "1" if treatment cortex is heavier and "0" otherwise. Then use a binomial model to test H0 : $\pi \leq 0.5$ versus H1 : $\pi > 0.5$ where $\pi$ is the probability of observing a 1. (This is called a sign test since we are recording whether the sign of the difference in weights - treatment minus control - is positive or not. )
+
+Method 1, Binomial Model Hypothesis Test:
+$$
+H_0 = \pi \leq 0.5, \\
+H_1 = \pi > 0.5
+$$
+We may use the function `binom.test` in mosaic to find this p-val
+
+```{r}
+#Binomial Model
+brain_wts <- brain_wts %>% 
+  mutate(trt_heavier = ifelse(treatment > control, 1,0))
+
+brain_wts %>% summarise(num_heavier = sum(trt_heavier),
+                        prop_heavier = mean(trt_heavier))
+
+#use binom.test to do this (there is one in stats/one in mosaic)
+mosaic::binom.test(~ trt_heavier, 
+                   p = 0.5,
+                   alternative="greater", 
+                   data=brain_wts)
+```
+
+
+• Method 2: Express the data for each pair as the difference in cortex weights between the treatment and control animal. Then conduct a paired t-test of H0 : $\mu_d \leq 0$ versus H1 : $\mu_d > 0$.
+
+Method 2, Paired t-test:
+
+```{r}
+brain_wts %>% 
+  mutate(diff = treatment-control) %>% 
+  infer::t_test(response = diff, mu = FILL_IN, alternative = FILL_IN)
+```
+
+
+d.  What are some advantages/disadvantages of the sign test compared with the paired t-test from part?
+
+
