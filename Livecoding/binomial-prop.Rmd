@@ -46,7 +46,7 @@ ONLY IF THERE IS TIME
 e. We saw that Clopper Pearson intervals have the best coverage while Wald intervals have the worst. But there ain't no such thing as a free lunch. 
 The file `simdata.csv` contains the results from simulating $X \sim Binom(n = 35, \pi)$ for various choices of $\pi$ and calculating the Wald, Score, Plus4 and Clopper-Pearson intervals. For each choice of $\pi$ and confidence interval method, the simulation is repeated 2,000 times. 
 
- - Read in the file into a data frame called `Sims` and make sure you understand what's in it. 
+ - Read in the file into a data frame and make sure you understand what's in it. 
  
  - Create a new dataframe which contains the average interval width for each combination of $\pi$ and method. I am looking for something like the following output:
 
