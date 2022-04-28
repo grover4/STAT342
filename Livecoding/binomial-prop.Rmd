@@ -1,0 +1,66 @@
+---
+title: "Confidence Intervals for a Binomial Proportion"
+author: "YOUR NAME"
+date: "4/29/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fastR2)
+library(tidyverse)
+```
+
+1. Suppose we want to conduct an exact binomial test of 
+$$H_0: \pi \leq 0.5, \ \ H_1: \pi > 0.5$$ in a binomial model with $n=15$ and $x=10$. The level of significance of the test will be $\alpha = 0.05$.
+
+a. (Just for review) Find the exact binomial p-value. 
+
+
+b. Suppose you were to construct a corresponding one-sided 95\% confidence interval estimate $[\ell, 1]$ for $\pi$ using your data. Would $0.5$ lie in your interval? 
+
+
+c.  What other values of $\pi$ lie in your confidence interval? In other words, what other values of $\pi_0$ will be "accepted" by this observed data? Calculate the exact binomial p-value for testing 
+ $$H_0: \pi \leq \pi_0, \ \ H_1: \pi > \pi_0$$
+ for a few different $\pi_0$. Approximately what is the smallest $\pi_0$ that will "accepted"?
+ 
+
+
+2. In this exercise, you will work with the `gss16` dataset from the \textbf{dsbox} package. (You will need to install the package first)
+
+a. Load the dataset by typing `data(gss16)` in the Console. Also read the help file by typing `?gss16`.
+
+We will study the variable `harass5` which contains responses to the question "Over the past five years, have you been harassed by your superiors or co-workers at your job, for example, have you experienced any bullying, physical or psychological abuse?" 
+
+b. Filter the data to extract the rows with "Yes" or "No" responses and save the result to `gss16_subset`.  
+
+(Hint: the vertical bar `|` may be used to filter on multiple conditions. )
+
+c. What fraction of the respondents in this data set reported being harassed at work?
+
+d. Calculate a 95% confidence interval for the proportion of Americans who have been harassed at work. Try all the methods we have learned today.
+
+
+ONLY IF THERE IS TIME
+
+e. We saw that Clopper Pearson intervals have the best coverage while Wald intervals have the worst. But there ain't no such thing as a free lunch. 
+The file `simdata.csv` contains the results from simulating $X \sim Binom(n = 35, \pi)$ for various choices of $\pi$ and calculating the Wald, Score, Plus4 and Clopper-Pearson intervals. For each choice of $\pi$ and confidence interval method, the simulation is repeated 2,000 times. 
+
+ - Read in the file into a data frame called `Sims` and make sure you understand what's in it. 
+ 
+ - Create a new dataframe which contains the average interval width for each combination of $\pi$ and method. I am looking for something like the following output:
+
+| pi   | method         | average width |
+| :---:| :---:          |   :---:       |
+|0.1   | Wald           |   xxx         |
+|0.1   | Score          |   xxx         |
+|0.1   | Plus4          |   xxx         |
+|0.1   | Clopper-Pearson|   xxx         |
+|0.15  | Wald           |   xxx         |
+|0.15  | Score          |   xxx         |
+etc.
+ 
+(Hint: use `group_by` and `summarise`)
+
+
+ - Now make a line plot of the average width versus the $\pi$ with color mapped to the method. 
