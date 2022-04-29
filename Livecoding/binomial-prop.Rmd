@@ -14,10 +14,11 @@ library(tidyverse)
 1. Suppose we want to conduct an exact binomial test of 
 $$H_0: \pi \leq 0.5, \ \ H_1: \pi > 0.5$$ in a binomial model with $n=15$ and $x=10$. The level of significance of the test will be $\alpha = 0.05$.
 
-a. (Just for review) Find the exact binomial p-value. 
+a. (Just for review) Find the exact binomial p-value. You may use `binom.test`, but I want you to also verify the answer by calculating it yourself. 
 
 
-b. Suppose you were to construct a corresponding one-sided 95\% confidence interval estimate $[\ell, 1]$ for $\pi$ using your data. Would $0.5$ lie in your interval? 
+
+b. Suppose you wanted to test the hypothesis by construct the corresponding one-sided 95\% confidence interval estimate $[\ell, 1]$ for $\pi$ using your data. Would $0.5$ lie in your interval? Yes or no and explain. 
 
 
 c.  What other values of $\pi$ lie in your confidence interval? In other words, what other values of $\pi_0$ will be "accepted" by this observed data? Calculate the exact binomial p-value for testing 
@@ -26,9 +27,9 @@ c.  What other values of $\pi$ lie in your confidence interval? In other words, 
  
 
 
-2. In this exercise, you will work with the `gss16` dataset from the \textbf{dsbox} package. (You will need to install the package first)
+2. In this exercise, you will work with the `gss16.csv` dataset from the \textbf{dsbox} package. (The package cannot be installed on JupyterHub, so I have download the data as a CSV file. You can practice reading in CSV files :)
 
-a. Load the dataset by typing `data(gss16)` in the Console. Also read the help file by typing `?gss16`.
+a. Read in the data set. 
 
 We will study the variable `harass5` which contains responses to the question "Over the past five years, have you been harassed by your superiors or co-workers at your job, for example, have you experienced any bullying, physical or psychological abuse?" 
 
