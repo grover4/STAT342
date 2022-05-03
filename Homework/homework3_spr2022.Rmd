@@ -144,19 +144,6 @@ c. Add two columns to `state_date` which contain the `lower` and `upper` limits 
 
    (Assume each poll is based on 1,000 voters)
  
-   ```{r inculde = FALSE}
-   
-   n <- 1000
-   
-   state_data <- state_data %>% 
-    mutate(lower = poll_pred/100 - 
-           qnorm(0.975)*sqrt(poll_pred*(1-poll_pred/100)/(100*n) ),
-           upper = poll_pred/100 +
-           qnorm(0.975)*sqrt(poll_pred*(1-poll_pred/100)/(100*n )))
-   
-   
-   ```
-   
 d. We now compare the polling prediction of Obama's support share against Obama's vote share on election day (`Obama`). The idea is that the latter represents the true parameter value in each state. If our 95\% confidence intervals are appropriate, then 95\% of them (or about 48 states) should contain the actual election result. 
 
 How many of the 51 confidence intervals constructed in part c. actually contain the true election day results in the state? (Show your code)
