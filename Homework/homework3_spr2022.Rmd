@@ -1,0 +1,165 @@
+---
+title: "Homework 3"
+subtitle: "Spring 2022"
+output: pdf_document
+header-includes:
+      - \usepackage{setspace}\doublespacing
+      - \usepackage{xcolor}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This homework is due on Tuesday May 10 by midnight PST.
+
+\textbf{Instructions}: Follow each one diligently. 
+\hrule
+\begin{enumerate}
+	\item Please type your answers and upload as a PDF in Gradescope. If you prefer to write your answers, we will accept handwritten work provided it is legible. If you decide to go this route, be sure to [scan](https://www.camscanner.com) and upload a single file.  
+	\item Write your full name (as it appears in the grade book) on the first page, preferably as a running header on each page if you are writing by hand.
+	\item Answer the questions in order and number them as I have here. 
+	\item \textbf{Write complete answers which includes justifications for steps and/or references to results you use. This is really important.You all need to practice writing mathematical answers - define notation, explain what you are doing, cite any rules, etc. }
+	\item Clearly indicate your final answer. Put a frame around it where appropriate.
+	\item \textbf{For questions that involve coding, you must include code and not just the answers. Please do not copy and paste your code, show us your code as Rscript at the very least. Convince us that it runs by showing intermediate output. } 
+\end{enumerate}
+\hrule 
+
+\textbf{Rule on collaboration:} You may discuss the answers in general terms with your peers and even guide someone who is stuck by giving high level advice. However, you are expected to write up your answers individually and entirely in your own words. 
+
+1. (1 point) A random sample from an integer valued random variable $Y$ is
+  
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccccc}
+value & 0 & 1 & 2 & 3 & 4 & $\geq 5$ \\
+freq & 13 & 18 & 23 & 15 & 6 & 8 \\
+\end{tabular}
+\end{table}
+
+a. Find a 95\% confidence interval for $P(Y \geq 2)$ using Wald, Score and the Plus4 methods.  (Please don't just start with the answer. Set up the problem first. What is the random variable? What model are you assuming for it? What is its observed value? What are you trying to do? )
+
+b. Does the confidence interval produced by `prop.test()` match any of these? If so which one? (Try `prop.test` with and without making a correction for continuity.)
+
+2. (2 points) A rat poison is defined by its lethal dose $d$. However, tolerance to the poison varies from rat to rat as a random variable $X$ such that 
+$$Y = \ln(X) \sim Norm(\mu, \sigma)$$
+both unknown. If the tolerance $X$ exceeds $d$, then the rat obviously lives; otherwise, it succumbs to its fate.
+
+   A manufacturer claims that if the dose $d=1$, then 60\% of the rats will die, while if $d=4$ about 95\% are killed. To test the manufacturer's claim, 150 rats are given dose 2, and 95 of them die. Does this indicate that the manufacturer has overestimated the effect of the poison? 
+
+
+   \emph{Hint:} The problem gives you $P(X \leq d)$ for $d=1$ and $d=4$. Use it to estimate $\mu$ and $\sigma$ and consequently $\pi_0 = P(X \leq 2)$. You are then going to test $H_0: \pi = \pi_0$ in a binomial model.
+   
+   For full credit, please clearly 
+   
+   - define the binomial random variable, 
+    
+   - show your calculation of $\pi_0$, 
+   
+   - state the null and alternative 
+   
+   - calculate an exact binomial p-value (if you are using binom.test, be sure to give an expression for the p-value first)
+   
+   - make a conclusion in context
+
+3. (1 point) Derive Wilson's confidence interval -- equation (2) on page 9 of the notes. \emph{Hint: square both sides of the inequality in (1), then use the quadratic formula to solve for the roots of the equation.}
+
+   Be sure to show your steps carefully.
+
+4. (1 point) In this problem, you will estimate the % of voters who supported Barack Obama in the 2008 Presidential Elections using pre-election polling data. This exercise is fairly R intensive and will require you to join two data sets: `polls08.csv` and `pres08.csv`.  
+
+The CSV data file `pres08.csv` contains the election results by state.The codebook for this dataset is shown below.
+
+\begin{table}[h]
+\caption{Code book for \texttt{pres08.csv}}
+\begin{tabular}{ccp{5in} } \\\hline
+state & chr & abbreviated name of state \\
+state.name & chr & unabbreviated name of state \\
+Obama & dbl & Obama's vote share (percentage)\\
+McCain & dbl & McCain's vote share (percentage) \\ 
+EV & dbl & number of electoral college votes for the state (not necessary for this analysis)
+\end{tabular}
+\end{table}
+
+In addition, we have the CSV file `polls08.csv` which contains results from many polls within each state leading up to the elections. \textbf{We will assume that each poll is based on a sample of size 1,000 taken from the individuals in that state.}
+
+\begin{table}[h]
+\caption{Code book for \texttt{pres08.csv}}
+\begin{tabular}{ccp{5in} } \\\hline
+state & chr & abbreviated name of state in which poll was conducted\\
+Obama & dbl& predicted support for Obama (percentage) \\
+McCain & dbl& predicted support for McCain (percentage) \\ 
+Pollster & chr & name of organization conducting the poll \\
+middate & date & middate of the period when the poll was conducted
+\end{tabular}
+\end{table}
+
+
+- Read in the two data files using `read_csv` from \textbf{tidyverse}. Be sure to set `include=FALSE` so we don't see your code, because we don't need to see it.
+
+   ```{r message=F,warning = F}
+   library(tidyverse)
+   polls <- read_csv(file = "polls08.csv")
+   pres <- read_csv(file = "pres08.csv")
+
+   ```
+
+- For each state, we will now generate a poll prediction for Obama's share of the vote using only the latest polls from the state. To do this, we first create a new variable called `Days_to_election` in the `polls` dataframe which counts the number of days to the election Nov 4, 2008. 
+
+   ```{r}
+   # set include = FALSE as a chunk option
+   
+   polls <- polls %>% 
+     mutate( Days_to_election = as.double(as.Date("2008/11/04") - middate) )
+
+  ```
+
+- Now we will extract the poll results closest to the election which is indicated by the minimum value of the `Days_to_election` variable. Finally, the resulting data frame, `latest` is used to compute the average of the predicted margins.  
+
+   ```{r}
+   # set include = FALSE as a chunk option
+   
+   latest <- polls %>% 
+           group_by(state) %>%
+            filter(Days_to_election == min(Days_to_election)) %>% 
+                summarise( poll_pred = mean(Obama) ) %>%
+                  ungroup() 
+   
+   ```
+
+a. In which states did the final polls predict above a 60\% share of the vote for Obama? (no coding required, I just want to make sure you are looking at the data and following along)
+
+- Now,we will merge the `latest` data frame with the `pres` data frame that contains the actual election result from each state. We use `left_join` from the **dplyr** package which adds the columns from one data frame to the other, matching rows based on the `by` variable.
+
+   ```{r}
+   # set include = FALSE as a chunk option
+   
+   state_data <- left_join(pres, latest, by = "state")
+   
+   ```
+   
+ b. Create a scatter plot, properly labeled, which shows the relationship between the predicted vote share and the actual results for Obama. How well do they correlate? 
+ 
+c. Add two columns to `state_date` which contain the `lower` and `upper` limits of the Wald confidence interval for the proportion of Obama supporters in each state based on the poll predictions `poll_pred`. Please print the first five rows of the resulting data frame, so we can verify your code is accurate. 
+
+   (Assume each poll is based on 1,000 voters)
+ 
+   ```{r inculde = FALSE}
+   
+   n <- 1000
+   
+   state_data <- state_data %>% 
+    mutate(lower = poll_pred/100 - 
+           qnorm(0.975)*sqrt(poll_pred*(1-poll_pred/100)/(100*n) ),
+           upper = poll_pred/100 +
+           qnorm(0.975)*sqrt(poll_pred*(1-poll_pred/100)/(100*n )))
+   
+   
+   ```
+   
+d. We now compare the polling prediction of Obama's support share against Obama's vote share on election day (`Obama`). The idea is that the latter represents the true parameter value in each state. If our 95\% confidence intervals are appropriate, then 95\% of them (or about 48 states) should contain the actual election result. 
+
+How many of the 51 confidence intervals constructed in part c. actually contain the true election day results in the state? (Show your code)
+
+
+
