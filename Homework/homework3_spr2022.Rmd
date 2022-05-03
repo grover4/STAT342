@@ -146,7 +146,7 @@ c. Add two columns to `state_date` which contain the `lower` and `upper` limits 
  
 d. We now compare the polling prediction of Obama's support share against Obama's vote share on election day (`Obama`). The idea is that the latter represents the true parameter value in each state. If our 95\% confidence intervals are appropriate, then 95\% of them (or about 48 states) should contain the actual election result. 
 
-How many of the 51 confidence intervals constructed in part c. actually contain the true election day results in the state? (Show your code)
+   How many of the 51 confidence intervals constructed in part c. actually contain the true election day results in the state? (Show your code)
 
 
 
