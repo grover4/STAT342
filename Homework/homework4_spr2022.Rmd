@@ -1,0 +1,86 @@
+---
+title: "Homework 4"
+subtitle: "Spring 2022"
+output: pdf_document
+header-includes:
+      - \usepackage{setspace}\doublespacing
+      - \usepackage{xcolor}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This homework is due on Tuesday May 17 by midnight PST.
+
+\textbf{Instructions}: Follow each one diligently. 
+\hrule
+\begin{enumerate}
+	\item Please type your answers and upload as a PDF in Gradescope. If you prefer to write your answers, we will accept handwritten work provided it is legible. If you decide to go this route, be sure to [scan](https://www.camscanner.com) and upload a single file.  
+	\item Write your full name (as it appears in the grade book) on the first page, preferably as a running header on each page if you are writing by hand.
+	\item Answer the questions in order and number them as I have here. 
+	\item \textbf{Write complete answers which includes justifications for steps and/or references to results you use. This is really important.You all need to practice writing mathematical answers - define notation, explain what you are doing, cite any rules, etc. }
+	\item Clearly indicate your final answer. Put a frame around it where appropriate.
+	\item \textbf{For questions that involve coding, you must include code and not just the answers. Please do not copy and paste your code, show us your code as Rscript at the very least. Convince us that it runs by showing intermediate output. } 
+\end{enumerate}
+\hrule 
+
+\textbf{Rule on collaboration:} You may discuss the answers in general terms with your peers and even guide someone who is stuck by giving high level advice. However, you are expected to write up your answers individually and entirely in your own words. 
+
+1. (1 point) Suppose an \emph{i.i.d} sample of size $n=9$ is taken from the population distribution
+	\begin{eqnarray*}
+	f_{\theta}(x) & = & \left\{ \begin{array}{cc} 
+	              \frac{1}{3} - \theta & x=0 \\
+	              \frac{1}{3} & x=1 \\
+	              \frac{1}{3} + \theta & x=2 \end{array} \right.
+	  \end{eqnarray*}
+	  where $-\frac{1}{3} \leq \theta \leq \frac{1}{3}$.
+ We observe the sample 0 0 1 0 1 2 1 0 0. 
+ 
+  a.  Derive the likelihood function $L(\theta)$ in general for a sample of size $n$.  (Show your steps beginning with the definition of a likelihood function)
+  b. Derive an expression for the MLE of $\theta$ showing your work. (Show your steps beginning with the definition of the MLE)
+  c. Draw a graph showing the likelihood function as a function of $\theta$ for the observed sample. (We need to see inline code and the output from the code.)
+  
+  d. Calculate the MLE based on the observed sample and be sure to verify it is a maximum.
+
+2. (1 point) A set of	cheap light	bulbs have a lifetime (in hours) which is	exponentially distributed with the unknown mean	$\theta$:
+$$f(x) = \frac{1}{\theta} exp(-x/\theta), \ \ 0 < x < \infty, \ \theta \geq 0.$$
+
+   Choosing	a random	sample of ten light	bulbs, they are turned on simultaneously and observed for 48 hours. During this period, six bulbs went out, at times $x_1,x_2,\dots,x_6$. At the end of the experiment, four light bulbs were still working. 
+
+  a.  Derive the likelihood function $L(\theta)$ in general for a random sample of size $n$.
+
+  b. Derive an expression for the MLE of $\theta$ showing your work. 
+  c. Draw a graph showing the likelihood function as a function of $\theta$ for the observed sample. 
+  
+  d. Calculate the MLE based on the observed sample and be sure to verify it is a maximum.
+  
+3.	(1 point) Let	 $X \sim Norm(\mu,1)$,	and	define	$$Y = exp(X)$$.
+  a. 	Derive	the	PDF	of	$Y$ using the CDF method. (Please indicate the CDF and PDF clearly in your answer for the range of $y$. The CDF does not need to be evaluated for you to find the PDF. Keep in mind the technique you saw in section about differentiating with respect to an end point of an integral. )
+
+  b.	Based	on	a	random sample $y_1, y_2, \dots, y_n$ from	the PDF of $Y$,	derive an expression for	the	maximum	likelihood	estimator	of	$\mu$. (Please indicate the MLE clearly at the end in your answer.)
+
+
+
+4. (2 points) A sample of size 10 drawn from $Gamma(\alpha,2)$ distribution is shown below: 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrrrr}
+  \hline
+x & 1.425 & 2.216 & 0.738 & 0.590 & 1.266 & 0.601 & 0.483 & 1.313 & 1.707 & 1.008 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+  a. Use the method of moments to find an estimate of $\alpha$. (Clearly write the gamma PDF, derive $E(X$)$ and then how you will find the MOM and then do your work to find it. )
+
+  b. Use this estimate as a starting value along with the sample and use `maxLik()` function in R, to compute the MLE of $\alpha$. (Please show inline code and output)
+
+  c. Use the starting value obtained in part (a) and derive 3 iterations of Newton Raphson method using R as a calculator and report the values $\alpha$ obtained from them. Clearly state your $g(.)$ function and $g^{\prime}(.)$ function that are used in Newton Raphson method. Comment on the convergence using values obtained in 3rd iteration here and value obtained in part b. 
+    
+   (\emph{Hint:} You may use `digamma` and `trigamma` function in R to calculate the first and second derivatives of the **logarithm** of the gamma function at a user supplied value of $\alpha$.
+
+ 
+ 
+ 
