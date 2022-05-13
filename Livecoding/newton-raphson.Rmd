@@ -26,14 +26,7 @@ $$X_{1}, X_2, \dots, X_{10} \overset{i.i.d.}{\sim} Pois(\lambda).$$
 
 a. Write the log-likelihood function for $\lambda$ based on this model. What is the ML estimator of $\lambda$? (Write it out on paper and then type it using Latex for practice.)
 
-b. Make a graph of the log likelihood function for this data set. (Take a look at practice problems 1.1 from onenote for code Harshil gave you in section for hints on how to approach this.)
 
-```{r}
+b. Using R as a calculator, work out three iterations of the Newton-Raphson algorithm for finding the MLE $\widehat{\lambda}$ using a starting guess of $\lambda_0=1$.
 
-
-
-```
-
-c. Using R as a calculator, work out three iterations of the Newton-Raphson algorithm for finding the MLE $\widehat{\lambda}$ using a starting guess of $\lambda_0=1$.
-
-d. Use `maxLik` and calculate the MLE of $\lambda$ using Newton Raphson. (You will need to write a function, `loglik.pois` to calculate the log likelihood from a. )
+c. Use `maxLik` and calculate the MLE of $\lambda$ using Newton Raphson. (You will need to write a function, `loglik.pois` to calculate the log likelihood from a. )
