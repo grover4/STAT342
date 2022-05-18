@@ -1,0 +1,117 @@
+---
+title: "Quiz0516"
+output: pdf_document
+date: '2022-05-16'
+---
+
+```{r,messages=F,warnings=F,include=F}
+library(MASS)
+library(maxLik)
+library(ggplot2)
+```
+
+## Practice Problem 3.2.2
+
+First we may graph the density of these duration times using ggplot. For the binwidth we can use the rule of thumb, range(x)/sqrt(n). From our plots we clearly observe bimodal behavior, so a mixture model does make sense. 
+
+
+```{r}
+rule_of_thumb = (max(geyser$duration)-min(geyser$duration))/sqrt(nrow(geyser))
+
+ggplot(geyser,aes(x=duration))+
+  geom_histogram(binwidth=rule_of_thumb)
+```
+
+First we can create our likelihood function, denoted lik.norm. 
+
+```{r}
+#define liklihood with vector of parameters arg, and data (x)
+lik.norm <- function(parameters, x){
+  #extract all the relevant parameters
+  alpha = parameters[1]
+  mu1 = parameters[2]
+  mu2 = parameters[3]
+  sd1 = parameters[4]
+  sd2 = parameters[5]
+  #set bounds for the ranges of these variables
+  if(alpha < 0 | alpha > 1 | sd1 < 0 | sd2 < 0){
+    NA
+  }
+  #output the density
+  else{
+     (alpha*dnorm(x,mu1,sd1))+(1-alpha)*dnorm(x,mu2,sd2)
+  }
+}
+```
+
+Next, we can denote our log-likelihood function, by taking the sum of logs of the likelihood above. 
+
+```{r}
+#create log-likelihood by summing the logs of the previous func.
+loglik.norm <- function(parameters,x)
+  {
+  sum(log(lik.norm(parameters,x)))
+  }
+```
+
+Next we may use the maxLik function to maximize this log-likeloihood using the Newton-Raphson algorithm. For our initalizations, we can set mu1 = mean(duration)-1, mu2 = mean(duration)+1, sd1=sd2=sd(duration). For alpha we will can use equal mixture for our starting point, so alpha=0.5.
+
+```{r}
+#initialize
+m <- mean(geyser$duration)
+s <- sd(geyser$duration)
+alpha_init <- 0.5
+
+#save the estimates so we can extract them later. 
+estimates <- maxLik(logLik = loglik.norm, 
+       start = c(alpha_init,m-1,m+1,s,s),
+       method = "NR",
+       tol = 1e-4,
+       x = geyser$duration
+       )
+estimates
+```
+
+We can now overlay our MLE estimate over the sample distribution. 
+
+Using geom_line:
+
+```{r}
+ggplot(geyser,aes(x=duration))+
+  geom_histogram(binwidth=rule_of_thumb, aes(y=..density..))+
+  #overlay density using the lik.norm function and geom_line
+  geom_line(aes(y=lik.norm(estimates$estimate,duration)),col='red')+
+  labs(title='Geyser Duration times with Normal Mixture MLE overlayed',
+  x='Duration',
+  y='Density')
+```
+Using geom_function:
+
+```{r}
+ggplot(geyser,aes(x=duration))+
+  geom_histogram(binwidth=rule_of_thumb, aes(y=..density..))+
+  #pass in function, and args as a list.
+  geom_function(fun=lik.norm, args = list(parameters = estimates$estimate),col='red')+
+  labs(title='Geyser Duration times with Normal Mixture MLE overlayed',
+  x='Duration',
+  y='Density')
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
