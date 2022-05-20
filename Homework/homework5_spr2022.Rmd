@@ -1,0 +1,89 @@
+---
+title: "Homework 5"
+subtitle: "Spring 2022"
+output: pdf_document
+header-includes:
+      - \usepackage{setspace}\doublespacing
+      - \usepackage{xcolor}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This homework is due on Tuesday May 24 by midnight PST.
+
+\textbf{Instructions}: Follow each one diligently. 
+\hrule
+\begin{enumerate}
+	\item Please type your answers and upload as a PDF in Gradescope. If you prefer to write your answers, we will accept handwritten work provided it is legible. If you decide to go this route, be sure to [scan](https://www.camscanner.com) and upload a single file.  
+	\item Write your full name (as it appears in the grade book) on the first page, preferably as a running header on each page if you are writing by hand.
+	\item Answer the questions in order and number them as I have here. 
+	\item \textbf{Write complete answers which includes justifications for steps and/or references to results you use. This is really important.You all need to practice writing mathematical answers - define notation, explain what you are doing, cite any rules, etc. }
+	\item Clearly indicate your final answer. Put a frame around it where appropriate.
+	\item \textbf{For questions that involve coding, you must include code and not just the answers. Please do not copy and paste your code, show us your code as Rscript at the very least. Convince us that it runs by showing intermediate output. } 
+\end{enumerate}
+\hrule 
+
+\textbf{Rule on collaboration:} You may discuss the answers in general terms with your peers and even guide someone who is stuck by giving high level advice. However, you are expected to write up your answers individually and entirely in your own words. 
+
+1. (1 point) A company has manufactured certain objects and has printed a serial number on each manufactured object. The serial numbers start at 1 and end at $N$, where $N$ is the (unknown) number of objects that have been manufactured. One of these objects is selected at random, and the serial number of that object is 888.
+
+a. What is the method of moments estimate of $N$?  Don't forget to:
+  - Define the random variable $X$
+  - Write the PMF of $X$
+  - Calculate $E\left[X \right]$ with your work shown
+  - Give the method of moments estimate
+
+b. What is the maximum likelihood estimator of $N$? Don't forget to:
+  - Write the likelihood function
+  - Maximize it to find the MLE
+  
+2. (1 point) Suppose that in a population of twins, males (M) and females (F) are equally likely and that the probability that the twins are identical is $\alpha$. If the twins are not identical, their genders are independently determined. If they are identical, their genders are obviously the same.
+	
+	a. Denote
+	\begin{eqnarray*}
+	\pi_1 &=& P(MM),\\
+	\pi_2&=& P(FF), \\
+	\pi_3 &=& P(MF).
+	\end{eqnarray*}
+	  where for example $\mbox{MF}$ represents the event that one of the twins is female and the other is male.
+	
+  	Show, using the rules of probability, that
+	
+	$$P(MM) = P(FF) = (1+\alpha)/4$$ and $$P(MF) = (1-\alpha)/2.$$
+	 Please be sure to justify your steps.
+	
+
+	b. Let $\left\{X_1,X_2,X_3\right\}$ denote the number (out of $n$ twins) of $\mbox{MM}$, $\mbox{FF}$ and $\mbox{MF}$. Then a reasonable model is
+	$$\langle X_1,X_2,X_3 \rangle \sim Multinom(n, \mathbf{\pi}=(\pi_1,\pi_2,\pi_3) ).$$
+	  Based on observing $x_1$ MM twins, $x_2$ FF twins, and $x_3$ MF twins, show that the MLE of $\alpha$ is
+\begin{eqnarray*}
+\widehat{\alpha} &=& (x_1+x_2-x_3)/n.
+\end{eqnarray*}
+	  
+	
+  
+3. (1 point)  A scientist has obtained two random samples: $X_1,X_,2,\dots,X_{n_1} \overset{i.i.d.}{\sim} Exp(mean=\theta)$  independently of $Y_1,Y_2,\dots,Y_{n_2} \overset{i.i.d.}{\sim} Exp(mean=k \theta)$, where $k$ is a known number but $\theta$ is unknown. The scientist has computed MLEs $\widehat{\theta}_1$ and $\widehat{\theta}_2$ from each of the samples. 
+   
+   Now they want a single estimate of $\theta$, so she asks two statisticians for advice. One suggests finding the linear combination $a \widehat{\theta}_1 + (1-a) \widehat{\theta}_2,  \ 0 \leq a \leq 1$ with the smallest variance. The other suggests finding the MLE from the combined sample. 
+   
+   Show that both methods yield the same answer. Be sure to clearly indicate 
+   
+   - expressions for $\widehat{\theta}_1$ and $\widehat{\theta}_2$
+   - expression for the estimate obtained by statistician 1
+   - expression for the estimate obtained by statistician 2
+   
+   
+   \emph{Note: You may use without proof that the variance of an exponential random variable with mean $\theta$ is $\theta^2$. }
+   
+4. (2 points) Consider an i.i.d. sample of $n$ random variables from the PDF
+$$f(x) = \frac{1}{2 \sigma} exp\left(- \frac{|x|}{\sigma} \right), \ \ -\infty < x < \infty, \sigma > 0.$$
+
+a. Find $\widehat{\sigma}$, the maximum likelihood estimator of $\sigma$. (No second derivative check is needed)
+
+b. Is the MLE an unbiased estimator of $\sigma$? Show your work.
+
+c. Find the variance of the $\widehat{\sigma}$. Show your work. 
+
+d. Calculate the Fisher information number. What do you notice?
