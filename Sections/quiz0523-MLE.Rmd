@@ -1,0 +1,90 @@
+---
+title: "Quiz05-23"
+output:
+  pdf_document: default
+  html_document: default
+date: '2022-05-23'
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+MLE 4.1.1b
+
+```{r}
+
+```
+
+MLE Practice Problem 4.1.1c
+
+```{r}
+set.seed(342)
+
+#initialize all the values
+theta_hat <- .3065
+x1 <- 83
+x2 <- 447
+x3 <- 470
+n <- x1 + x2 + x3
+
+#write function to calculate MLE for each sample of x
+theta_mle <- function(x){
+  x1 <- x[1]
+  x2 <- x[2]
+  x3 <- x[3]
+  return((2*x1+x2)/(2*(x1+x2+x3)))
+}
+
+#write function to do num_trials simulations of a multinomial
+#with hardy weinberg probability weights with theta as a parameter
+hw_multinom <- function(theta){
+  theta_1 <- theta^2
+  theta_2 <- theta*(1-theta)
+  theta_3 <- (1-theta)^2
+  hw_p <- c(theta_1,theta_2,theta_3)
+  #rmultinom will return a num_vars x 1 matrix 
+  #(in our case we would have 3x1)
+  #so each column represents the simulated values for x1,x2,x3 in a given trial
+  samps = rmultinom(n = 1,size=n,p=hw_p)
+  #find MLE of the sample
+  theta_mle(samps)
+}
+
+
+B <- 1000
+
+sims <- hw_multinom(theta_hat)
+
+theta_mles <- c()
+
+#use for loop to get each column of the sims as an argument
+for(i in 1:B){
+ theta_mles[i] <- hw_multinom(theta_hat)
+}
+
+```
+
+Now we can see what this simulated MLE distribution looks like:
+
+```{r}
+#around .0023
+rule_of_thumb <- (max(theta_mles)-min(theta_mles))/sqrt(1000)
+
+ggplot() + geom_histogram(aes(x=theta_mles,y=..density..),binwidth = .003)+
+  labs(title='Histogram of 1000 simulated MLE Values')
+```
+We can now find the sample sd of these values:
+
+```{r}
+sd(theta_mles)
+```
+
+We calculated the asymptotic standard error as:
+
+```{r}
+theta_var <- (theta_hat*(1-theta_hat)/(2*n))
+sqrt(theta_var)
+```
+
+
