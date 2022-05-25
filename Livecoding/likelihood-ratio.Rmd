@@ -21,7 +21,8 @@ frequency & 3& 3 & 2 & 1 & 1 \\ \hline
 \end{table}
 
 Let $X_1, X_2, \dots, X_{10}$ denote the number of students who were late to each of the 10 classes. A reasonable model is 
-$$X_{1}, X_2, \dots, X_{10} \overset{i.i.d.}{\sim} Pois(\lambda).$$
+$$X_{1}, X_2, \dots, X_{10} \overset{i.i.d.}{\sim} Pois(\theta).$$ That is
+$$f(x) = exp(-\theta) \frac{ \theta^{x}}{x!}, \ \ x=0,1,2,\dots , \ \ \theta > 0.$$
 
 
 In this exercise, you will first derive the likelihood ratio test for testing
