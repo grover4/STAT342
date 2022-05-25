@@ -1,0 +1,33 @@
+---
+title: "Likelihood Ratio for a Poisson model"
+date: "5/12/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fastR2)
+library(tidyverse)
+```
+
+1. An instructor believes that the number of students who arrive late to class should follow a Poisson distribution. The table below indicates the number of such students in 10 consecutive classes.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cccccc}\hline
+number of late students & 0 & 1 & 2 & 3 & 4 \\
+frequency & 3& 3 & 2 & 1 & 1 \\ \hline
+\end{tabular}
+\end{table}
+
+Let $X_1, X_2, \dots, X_{10}$ denote the number of students who were late to each of the 10 classes. A reasonable model is 
+$$X_{1}, X_2, \dots, X_{10} \overset{i.i.d.}{\sim} Pois(\lambda).$$
+
+
+In this exercise, you will first derive the likelihood ratio test for testing
+$$H_0: \theta = 1, \ \ H_1: \theta \neq 1$$
+
+
+a. Calculate the p-value using the chi-square distribution. Be sure to check if the quadratic approximation seems reasonable for the log likelihood function. 
+
+b. Calculate the empirical p-value. Set a random number seed of 42535. 
