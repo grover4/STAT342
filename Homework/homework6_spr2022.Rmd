@@ -1,0 +1,87 @@
+---
+title: "Homework 6"
+subtitle: "Spring 2022"
+output: pdf_document
+header-includes:
+      - \usepackage{setspace}\doublespacing
+      - \usepackage{xcolor}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is your last homework and is due on Wednesday June 1 by midnight PST.
+
+\textbf{Instructions}: Follow each one diligently. 
+\hrule
+\begin{enumerate}
+	\item Please type your answers and upload as a PDF in Gradescope. If you prefer to write your answers, we will accept handwritten work provided it is legible. If you decide to go this route, be sure to [scan](https://www.camscanner.com) and upload a single file.  
+	\item Write your full name (as it appears in the grade book) on the first page, preferably as a running header on each page if you are writing by hand.
+	\item Answer the questions in order and number them as I have here. 
+	\item \textbf{Write complete answers which includes justifications for steps and/or references to results you use. This is really important.You all need to practice writing mathematical answers - define notation, explain what you are doing, cite any rules, etc. }
+	\item Clearly indicate your final answer. Put a frame around it where appropriate.
+	\item \textbf{For questions that involve coding, you must include code and not just the answers. Please do not copy and paste your code, show us your code as Rscript at the very least. Convince us that it runs by showing intermediate output. } 
+\end{enumerate}
+\hrule 
+
+\textbf{Rule on collaboration:} You may discuss the answers in general terms with your peers and even guide someone who is stuck by giving high level advice. However, you are expected to write up your answers individually and entirely in your own words. 
+
+
+1. (2 points) The results of scoring the offspring plants of as either starchy or sugary and as having either a green or a white base leaf appear below. 
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cccc} \hline
+1) starchy-green & 2) starchy-white & 3) sugary-green & 4) sugary-white \\ \hline
+1997 & 906 & 904 & 32 \\ \hline
+\end{tabular}
+\end{table}
+
+   According to a genetic model for these traits, the probability that a plant exhibits one of these trait combinations should be $\frac{1}{4} (2 + \theta)$ for the first combination, $\frac{1}{4}(1-\theta)$ for the middle two combinations and $\frac{1}{4} \theta$ for the last where $\theta$ is a parameter related to linkage closeness. 
+
+   a. Determine the MLE of $\theta$. Be sure to clearly show 
+   
+      - Log likelihood function $\ell(\theta)$ in terms of the counts $x_1, x_2, x_3, x_4$ (i.e., not just for this data)
+      - First derivative equation and calculate the MLE $\widehat{\theta}$.
+  
+   b. Give an expression for the asymptotic standard error of $\widehat{\theta}$ and calculate it. Use this to calculate a 95\% Wald confidence interval for $\theta$. 
+   
+   c. Use the parametric bootstrap method to estimate the standard error of $\widehat{\theta}$.
+     Set the random number seed to 394. Generate a large number (B=1500) of data sets from the model 
+$$X_1, X_2, X_3, X_4 \sim Multinom\left(n, \pi_1 = \frac{1}{4}(2+ \widehat{\theta}), \pi_2 = \frac{1}{4} (1 - \widehat{\theta}), \pi_3 = \frac{1}{4}(1-\widehat{\theta}), \pi_4 = \frac{1}{4} \widehat{\theta} \right).$$ From each of these data sets, estimate the MLE of $\theta$ and then calculate the standard deviation of these values. Also make a histogram of the distribution of the estimates. (Don't forget those labels and titles)
+
+   d. Derive an expression for the 95\% likelihood confidence interval for $\theta$ and then calculate it for these data using `uniroot.all`. 
+   
+2. (2 points) Suppose $X_1,X_2,\dots,X_n$ are an $i.i.d.$ sample from PDF
+$$f_{\theta}(x) = (\theta+1) x^{\theta}, \ \ 0 < x < 1,$$
+where $\theta > -1$. 
+ 
+   a. Determine the form of the likelihood ratio test statistic for testing $$H_0:\theta=0, \ \ H_1: \theta \neq 0$$  assuming a sample $x_1,x_2,\dots,x_n$.  To make grading easier, please clearly indicate each of the following: 
+    - Log likelihood function $\ell(\theta)$
+    - Expression for the MLE $\widehat{\theta}$ (no need to verify that it is a maximum)
+    - Expression for the likelihood ratio statistic simplified as much as possible
+    $$\Lambda_0 = \frac{ \ell(\widehat{\theta})}{\ell(\theta_0)}.$$
+ 
+   b. The 30 values below are a random sample from this distribution for some value of $\theta$. Calculate the likelihood ratio statistic for this data. (Show inline code and output)
+ 
+   ```{r} 
+   x<-c(0.64,0.92,0.73,0.96,0.98,0.33,0.80,0.96,0.81,0.76,0.98,0.75,
+     0.87,0.82,0.44,0.96,0.61,0.32,0.67,0.98,0.96,0.88,0.85,1.00,
+     0.86,0.88,0.80,0.83,0.64,0.5)
+   
+   ```
+
+  
+   c. Estimate the p-value for the likelihood ratio test statistic using the approximate chi-squared distribution. Is there reason to be concerned about using the chi-squared distribution? Compare the log likelihood function with its quadratic approximation.  
+
+   d. An alternative to using the chi-squared distribution to estimate the p-value is to calculate an empirical p-value by generating a large number $B$ of samples from the null hypothesis. Follow the steps below to calculate an empirical p-value. 
+   - Step 0: Set the random number seed to 414.
+   - Step 1: Generate $x^{\ast}_1, x^{\ast}_2, \dots, x^{\ast}_{30} \overset{i.i.d.}{\sim} Unif(0,1)$.   (why? Explain this in your answer)    
+   - Step 2: For the generated sample, calculate the value of the MLE $\widehat{\theta}^{\ast}$ and the likelihood ratio test statistic $\lambda^{\ast}_0$. 
+   - Step 3: Repeat steps 1 and 2 a large number $B=1500$ times. 
+   - Step 4: Count the fraction of times that $\lambda^{\ast}_0$ (or equivalently $2 \ln(\lambda^{\ast}_0)$) from the generated samples exceeds the $\lambda_0$ (or $2 \ln(\lambda_0)$ ) we observed. Report the empirical p-value and also make a histogram of the values of $\lambda^{\ast}_0$. (Don't forget those labels and title)
+   
+3. (1 point) Pruim problem 5.19 page 446: Show by direct calculation that the likelihood confidence interval for $\frac{1}{\lambda}$ satisfies the invariance property when $X_1,X_2,\dots,X_n \overset{i.i.d.}{\sim} Pois(\lambda)$.
+
+   That is, compute the MLE and likelihood confidence interval for $\theta = \frac{1}{\lambda}$ by reparametrizing the Poisson distribution and compare the results to a transformed interval for $\lambda$.
